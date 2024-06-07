@@ -1,0 +1,15 @@
+<p>data-display works!</p>
+
+<h4>User:</h4>
+<div>
+  {{user | json}}
+</div>
+
+<h4>Users:</h4>
+<div>
+  <ul>
+    <li *ngFor="let user of users">
+      {{user | json}}
+    </li>
+  </ul>
+</div>
