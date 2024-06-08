@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ReqresService } from '../../services/reqres.service';
+import { SecureService } from 'src/app/services/secure.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -13,13 +14,19 @@ import { CommonModule } from '@angular/common';
 export class DataDisplayComponent {
   public user: any;
   public users: any;
+  public secureUser: any;
 
-  constructor(private reqresService: ReqresService) {
+  constructor(private reqresService: ReqresService, private secureService: SecureService) {}
+
+  async ngOnInit() {
     this.reqresService.getUser(1).subscribe(data => {
       this.user = data
     });
     this.reqresService.getUsers().subscribe(data => {
       this.users = data
+    });
+    this.secureService.getUser(1).then(data => {
+      this.user = data
     });
   }
 }
