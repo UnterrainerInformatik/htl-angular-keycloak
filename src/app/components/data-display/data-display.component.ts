@@ -25,8 +25,6 @@ export class DataDisplayComponent {
     this.reqresService.getUsers().subscribe(data => {
       this.users = data
     });
-    this.secureService.getUser(1).subscribe(data => {
-      this.user = data
-    });
+    this.secureUser = await this.secureService.getUser(1);
   }
 }

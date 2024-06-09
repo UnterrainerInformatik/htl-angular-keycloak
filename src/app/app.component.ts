@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { DataDisplayComponent } from './components/data-display/data-display.component';
-import { KeycloakService } from './services/keycloak.service';
+import { KeycloakInitService } from './services/keycloak-init.service';
 
 @Component({
   selector: 'app-root',
@@ -10,21 +10,13 @@ import { KeycloakService } from './services/keycloak.service';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
+
 export class AppComponent {
   title = 'keycloak-angular';
 
-  constructor(private keycloakService: KeycloakService) {}
+  constructor(private keycloakInitService: KeycloakInitService) {}
 
   async ngOnInit() {
-    await this.initializeKeycloak();
-  }
-
-  private async initializeKeycloak() {
-    const isAuthenticated = await this.keycloakService.init();
-    if (isAuthenticated) {
-      console.log('User authenticated');
-    } else {
-      console.log('User not authenticated');
-    }
+    await this.keycloakInitService.initializeKeycloak();
   }
 }
