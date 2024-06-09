@@ -16,11 +16,15 @@ export class AppComponent {
   constructor(private keycloakService: KeycloakService) {}
 
   async ngOnInit() {
-    if(await this.keycloakService.init()) {
-      console.log('Keycloak initialized successfully');
+    await this.initializeKeycloak();
+  }
+
+  private async initializeKeycloak() {
+    const isAuthenticated = await this.keycloakService.init();
+    if (isAuthenticated) {
+      console.log('User authenticated');
     } else {
-      console.error('Keycloak initialization failed');
-      // redirect to error page
+      console.log('User not authenticated');
     }
   }
 }

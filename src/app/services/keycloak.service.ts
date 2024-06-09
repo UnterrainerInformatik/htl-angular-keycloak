@@ -12,14 +12,19 @@ export class KeycloakService {
     this.keycloakAuth = new Keycloak({
       url: 'https://auth.htl-leonding.ac.at/',
       realm: 'unterrainer',
-      clientId: 'secureLectures'  // Secure clients are not supported since this is a frontend-library
+      clientId: 'htl-test'  // Secure clients are not supported since this is a frontend-library
                                   // and there's no way to keep the client secret safe here.
     });
   }
 
   async init(): Promise<boolean> {
     try {
-      const authenticated = await this.keycloakAuth.init({});
+      console.log('Initializing Keycloak');
+      const authenticated = await this.keycloakAuth.init({
+        onLoad: 'login-required', // Redirect to login if not authenticated
+        flow: 'implicit', // Implicit flow is used for browser apps
+        checkLoginIframe: false, // Disable login iframe check
+      });
       console.log(`User is ${authenticated ? 'authenticated' : 'not authenticated'}`);
       return authenticated;
     } catch (error) {
@@ -32,11 +37,7 @@ export class KeycloakService {
     return this.keycloakAuth.token ? Promise.resolve(this.keycloakAuth.token) : Promise.reject('Not logged in');
   }
 
-  login() {
-    return this.keycloakAuth.login();
-  }
-
-  logout() {
+  async logout() {
     return this.keycloakAuth.logout();
   }
 

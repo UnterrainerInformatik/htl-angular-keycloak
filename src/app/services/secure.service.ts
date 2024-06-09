@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { ResponseData } from '../interfaces/response-data';
 import { KeycloakService } from './keycloak.service';
+import { of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -19,10 +20,10 @@ export class SecureService {
       if (this.keycloakService.isAuthenticated()) {
         return this.http.get<ResponseData>(SecureService.URL_USERS + "/" + id).pipe(
           map(response => response['data'])
-        ).toPromise();
+        );
       } else {
         console.log('User not authenticated');
-        return this.keycloakService.login();
+        return of(undefined)
       };
   }
   
@@ -30,9 +31,9 @@ export class SecureService {
       if (this.keycloakService.isAuthenticated()) {
         return this.http.get<ResponseData>(SecureService.URL_USERS).pipe(
           map(response => response['data'])
-        ).toPromise();
+        );
       } else {
-        return this.keycloakService.login();
+        return of(undefined)
       };
   }
 }
