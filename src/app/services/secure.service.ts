@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators';
 import { ResponseData } from '../interfaces/response-data';
 import { KeycloakService } from './keycloak.service';
 import { KeycloakInitService } from './keycloak-init.service';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -17,41 +17,32 @@ export class SecureService {
   constructor(private http: HttpClient, private keycloakService: KeycloakService, private keycloakInitService: KeycloakInitService) {
   }
 
-  async getUser(id: number) {
+  private async waitForAuth(func: (headers: HttpHeaders) => Observable<any>) {
     try {
       // Ensure Keycloak is initialized before proceeding.
       const r = await firstValueFrom(this.keycloakInitService.getKeycloakInitialized());
       console.log("Signal: Keycloak is initialized.", r);
-      const token = await this.keycloakService.getToken();
-      const headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
-      const responseData = await firstValueFrom(
-        this.http.get<ResponseData>(SecureService.URL_USERS + "/" + id, { headers }).pipe(
-          map(response => response['data'])
-        )
-      );
-      return responseData;
+      const headers = new HttpHeaders({ 'Authorization': 'Bearer ' + await this.keycloakService.getToken() });
+      return await firstValueFrom(func(headers));
     } catch (error) {
       console.error("Error in getUsers:", error);
-      throw error; // Re-throw the error or handle it as needed
+      throw error;
     }
   }
 
+  async getUser(id: number) {
+    return this.waitForAuth((headers) => {
+      return this.http.get<ResponseData>(SecureService.URL_USERS + "/" + id, { headers }).pipe(
+        map(response => response['data'])
+      )
+    });
+  }
+
   async getUsers() {
-    try {
-      // Ensure Keycloak is initialized before proceeding.
-      const r = await firstValueFrom(this.keycloakInitService.getKeycloakInitialized());
-      console.log("Signal: Keycloak is initialized.", r);
-      const token = await this.keycloakService.getToken();
-      const headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
-      const responseData = await firstValueFrom(
-        this.http.get<ResponseData>(SecureService.URL_USERS, { headers }).pipe(
-          map(response => response['data'])
-        )
-      );
-      return responseData;
-    } catch (error) {
-      console.error("Error in getUsers:", error);
-      throw error; // Re-throw the error or handle it as needed
-    }
+    return this.waitForAuth((headers) => {
+      return this.http.get<ResponseData>(SecureService.URL_USERS, { headers }).pipe(
+        map(response => response['data'])
+      )
+    });
   }
 }
