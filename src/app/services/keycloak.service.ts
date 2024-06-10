@@ -22,7 +22,9 @@ export class KeycloakService {
       console.log('Initializing Keycloak');
       const authenticated = await this.keycloakAuth.init({
         onLoad: 'login-required', // Redirect to login if not authenticated
-        flow: 'implicit', // Implicit flow is used for browser apps
+        flow: 'standard', // implicit flow: access token only; no auth code
+                          // hybrid flow: access token and id token; no auth code
+                          // standard flow: access token, id token and refresh token with auth code
         checkLoginIframe: false, // Disable login iframe check
       });
       console.log(`User is ${authenticated ? 'authenticated' : 'not authenticated'}`);
