@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ReqresService } from '../../services/reqres.service';
-import { SecureService } from 'src/app/services/secure.service';
+import { SecureService } from '../../services/secure.service';
 import { CommonModule } from '@angular/common';
 
 @Component({

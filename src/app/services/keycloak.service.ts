@@ -7,14 +7,18 @@ import Keycloak from 'keycloak-js';
 
 export class KeycloakService {
   private keycloakAuth: Keycloak;
+  private keycloakConfig = {
+    url: "https://keycloak.lan.elite-zettl.at/",
+    realm: 'cms',
+    clientId: 'CMS',
+    //url: 'https://auth.htl-leonding.ac.at/',
+    //realm: 'unterrainer',
+    //clientId: 'htl-test'  // Secure clients are not supported since this is a frontend-library
+                          // and there's no way to keep the client secret safe here.
+  };
 
   constructor() {
-    this.keycloakAuth = new Keycloak({
-      url: 'https://auth.htl-leonding.ac.at/',
-      realm: 'unterrainer',
-      clientId: 'htl-test'  // Secure clients are not supported since this is a frontend-library
-                                  // and there's no way to keep the client secret safe here.
-    });
+    this.keycloakAuth = new Keycloak(this.keycloakConfig);
   }
 
   async init(): Promise<boolean> {
